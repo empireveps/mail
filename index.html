@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carlota Email</title>
+  <style>
+    :root {
+      --bg: #f7f0e8;
+      --bg-2: #fcf8f4;
+      --panel: rgba(255,255,255,0.74);
+      --panel-strong: rgba(255,255,255,0.94);
+      --text: #231811;
+      --muted: #7f6a5d;
+      --accent: #e3bda1;
+      --accent-2: #ca8d62;
+      --accent-3: #9d6039;
+      --accent-4: #6f4127;
+      --glow: rgba(202,141,98,0.18);
+      --shadow-lg: 0 28px 80px rgba(84, 49, 27, 0.12);
+      --shadow-md: 0 18px 42px rgba(103, 62, 35, 0.10);
+      --shadow-sm: 0 10px 24px rgba(123, 79, 47, 0.10);
+      --radius-xl: 30px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --ease: cubic-bezier(.2,.8,.2,1);
+      --ok: #7e6a55;
+      --warn: #aa6a37;
+      --danger: #9e4f43;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(227,189,161,0.35), transparent 24%),
+        radial-gradient(circle at top right, rgba(157,96,57,0.10), transparent 20%),
+        radial-gradient(circle at bottom right, rgba(202,141,98,0.12), transparent 22%),
+        linear-gradient(180deg, var(--bg-2) 0%, var(--bg) 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .bg-orb { position: fixed; border-radius: 50%; filter: blur(20px); pointer-events: none; z-index: 0; opacity: 0.55; animation: floatOrb 12s ease-in-out infinite; }
+    .orb-1 { width: 280px; height: 280px; top: 70px; left: -60px; background: rgba(227,189,161,0.24); }
+    .orb-2 { width: 240px; height: 240px; top: 160px; right: -50px; background: rgba(157,96,57,0.10); animation-delay: 1.5s; }
+    .orb-3 { width: 200px; height: 200px; bottom: 80px; left: 10%; background: rgba(202,141,98,0.10); animation-delay: 3s; }
+    @keyframes floatOrb { 0%,100% { transform: translateY(0) translateX(0);} 50% { transform: translateY(-14px) translateX(10px);} }
+    @keyframes fadeSlideUp { 0% { opacity:0; transform:translateY(28px);} 100% { opacity:1; transform:translateY(0);} }
+    @keyframes shimmerText { 0% { background-position:0% 50%; } 100% { background-position:200% 50%; } }
+    @keyframes greetingFloat { 0%,100% { transform:translateY(0);} 50% { transform:translateY(-4px);} }
+    @keyframes pulseGlow { 0%,100% { box-shadow:0 0 0 0 rgba(202,141,98,0.16);} 50% { box-shadow:0 0 0 10px rgba(202,141,98,0.02);} }
+    .reveal { animation: fadeSlideUp 1.45s var(--ease) both; }
+    .topbar { position: sticky; top: 0; z-index: 8; min-height: 58px; display:flex; align-items:center; justify-content:center; border-bottom: 1px solid rgba(127,106,93,0.10); color:var(--muted); background:rgba(252,248,244,0.72); backdrop-filter: blur(16px); letter-spacing:.16em; text-transform:uppercase; font-size:12px; }
+    .app-shell { position:relative; z-index:1; max-width:1600px; margin:26px auto 0; padding:0 26px 42px; width:100%; }
+    .hero { display:flex; align-items:end; justify-content:space-between; gap:20px; margin-bottom:28px; padding:8px 4px; }
+    .hero-greeting { display:inline-block; font-size:15px; font-weight:700; letter-spacing:.02em; margin-bottom:14px; background: linear-gradient(90deg, var(--accent-4), var(--accent-2), var(--accent), var(--accent-3), var(--accent-4)); background-size:220% auto; -webkit-background-clip:text; background-clip:text; color:transparent; animation: shimmerText 6s linear infinite, greetingFloat 3.2s ease-in-out .5s 3; }
+    .eyebrow { display:inline-flex; align-items:center; gap:10px; font-size:12px; text-transform:uppercase; letter-spacing:.22em; color:var(--muted); margin-bottom:12px; }
+    .eyebrow-dot { width:8px; height:8px; border-radius:999px; background:linear-gradient(135deg,var(--accent-2),var(--accent-4)); box-shadow:0 0 0 6px rgba(202,141,98,0.10); animation:pulseGlow 2.8s ease-in-out infinite; }
+    .app-title { margin:0; font-family:Georgia, serif; font-size:clamp(36px,5vw,60px); line-height:1.02; font-weight:500; color:#2f1f17; letter-spacing:-.03em; }
+    .app-title-accent { display:inline-block; margin-left:8px; padding:4px 12px 6px; border-radius:999px; background:linear-gradient(135deg, rgba(227,189,161,0.32), rgba(202,141,98,0.18)); color:var(--accent-4); box-shadow: inset 0 1px 0 rgba(255,255,255,.5); }
+    .app-subtitle { margin:10px 0 0; color:var(--muted); font-size:15px; line-height:1.8; max-width:760px; }
+    .hero-badge { align-self:center; display:inline-flex; align-items:center; gap:8px; padding:14px 18px; border-radius:999px; background:linear-gradient(135deg, rgba(255,255,255,.70), rgba(255,255,255,.36)); border:1px solid rgba(157,96,57,.10); box-shadow:var(--shadow-sm); color:var(--accent-4); font-size:13px; letter-spacing:.04em; backdrop-filter:blur(12px); }
+    .workspace-grid { display:grid; grid-template-columns:minmax(760px,1.12fr) minmax(560px,.88fr); gap:30px; align-items:start; }
+    .panel { position:relative; overflow:hidden; background:linear-gradient(180deg,var(--panel-strong),var(--panel)); border:1px solid rgba(255,255,255,.58); border-radius:var(--radius-xl); box-shadow:var(--shadow-lg); backdrop-filter:blur(18px); padding:34px; transition:transform .28s var(--ease), box-shadow .28s var(--ease); }
+    .panel:hover { transform:translateY(-3px); box-shadow:0 34px 90px rgba(82,48,26,.14); }
+    .panel::before { content:""; position:absolute; inset:0; background:linear-gradient(140deg, rgba(255,255,255,.26), transparent 28%, transparent 70%, rgba(202,141,98,.07)); pointer-events:none; }
+    .section-title { display:flex; align-items:center; gap:12px; margin-bottom:10px; position:relative; z-index:1; }
+    .section-icon { width:40px; height:40px; display:inline-flex; align-items:center; justify-content:center; border-radius:14px; background:linear-gradient(135deg, rgba(227,189,161,.26), rgba(202,141,98,.14)); color:var(--accent-4); box-shadow: inset 0 1px 0 rgba(255,255,255,.6); font-size:18px; }
+    .panel h2 { margin:0; font-family:Georgia, serif; font-size:31px; font-weight:500; letter-spacing:-.02em; }
+    .panel .sub { margin:0 0 24px; color:var(--muted); line-height:1.75; font-size:15px; position:relative; z-index:1; }
+    .field { margin-bottom:22px; position:relative; z-index:1; }
+    .field label { display:block; margin-bottom:10px; font-size:12px; text-transform:uppercase; letter-spacing:.14em; color:var(--muted); font-weight:700; }
+    .helper-text { margin-top:8px; font-size:12px; color:var(--muted); line-height:1.6; }
+    .subject-pills, .day-pills { display:flex; gap:10px; flex-wrap:wrap; }
+    .subject-pill, .day-pill, .link-toggle-btn {
+      position:relative; overflow:hidden; border:1px solid rgba(202,141,98,.24); background:linear-gradient(180deg, rgba(255,255,255,.98), rgba(249,241,235,.95)); color:var(--accent-4);
+      border-radius:999px; padding:11px 18px; font:inherit; font-weight:600; cursor:pointer; box-shadow:var(--shadow-sm); transition:all .35s var(--ease);
+    }
+    .subject-pill::after, .day-pill::after, .link-toggle-btn::after { content:""; position:absolute; inset:0; background:linear-gradient(120deg, transparent 18%, rgba(255,255,255,.22) 48%, transparent 78%); transform:translateX(-140%); transition:transform .85s var(--ease); }
+    .subject-pill:hover::after, .day-pill:hover::after, .link-toggle-btn:hover::after { transform:translateX(140%); }
+    .subject-pill:hover, .day-pill:hover, .link-toggle-btn:hover { transform:translateY(-2px); border-color:rgba(157,96,57,.34); }
+    .subject-pill.active, .day-pill.active, .link-toggle-btn.active { background:linear-gradient(135deg,var(--accent-4),var(--accent-2) 58%,var(--accent)); color:white; border-color:transparent; box-shadow:0 14px 32px rgba(157,96,57,.22); transform:translateY(-1px) scale(1.01); }
+    .drop-zone { width:100%; border:1.5px dashed rgba(202,141,98,.45); border-radius:18px; padding:18px; background:rgba(255,255,255,.54); color:var(--muted); text-align:center; font-size:14px; line-height:1.7; margin-bottom:12px; transition:all .35s var(--ease); }
+    .drop-zone:hover { background:rgba(255,255,255,.76); border-color:rgba(157,96,57,.42); box-shadow:0 14px 28px rgba(157,96,57,.08); transform:translateY(-1px); }
+    .drop-zone strong { color:var(--text); }
+    input, textarea { width:100%; border:1px solid rgba(111,65,39,.10); border-radius:18px; padding:18px 20px; font:inherit; color:var(--text); background:rgba(255,255,255,.92); outline:none; transition:all .35s var(--ease); box-shadow: inset 0 1px 0 rgba(255,255,255,.6); }
+    input::placeholder, textarea::placeholder { color:#ab978a; }
+    input:focus, textarea:focus { border-color:rgba(157,96,57,.58); box-shadow:0 0 0 4px var(--glow), 0 10px 24px rgba(157,96,57,.08); transform:translateY(-1px); background:white; }
+    textarea { min-height:150px; resize:vertical; line-height:1.78; }
+    #emails { min-height:130px; }
+    #bodyText { min-height:390px; }
+    .toolbar { margin-bottom:12px; display:flex; gap:10px; flex-wrap:wrap; }
+    .tool-btn { border:1px solid rgba(202,141,98,.20); background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(248,240,233,.94)); color:var(--text); min-width:48px; padding:10px 14px; border-radius:14px; cursor:pointer; font-weight:700; box-shadow:var(--shadow-sm); transition:all .35s var(--ease); }
+    .tool-btn:hover { transform:translateY(-1px); border-color:rgba(157,96,57,.34); box-shadow:0 14px 24px rgba(157,96,57,.10); }
+    .link-builder { margin-top:14px; display:grid; grid-template-columns:1fr 1fr auto; gap:10px; opacity:1; transform:translateY(0); transition:opacity .4s var(--ease), transform .4s var(--ease), max-height .4s var(--ease); max-height:180px; }
+    .link-builder.hidden { opacity:0; transform:translateY(-8px); max-height:0; overflow:hidden; pointer-events:none; margin-top:0; }
+    .schedule-card { padding:18px; border-radius:20px; background:linear-gradient(180deg, rgba(255,248,242,.92), rgba(250,242,236,.88)); border:1px solid rgba(202,141,98,.12); box-shadow: inset 0 1px 0 rgba(255,255,255,.7); transition:all .35s var(--ease); }
+    .schedule-card:hover { transform:translateY(-1px); box-shadow:0 14px 28px rgba(157,96,57,.08), inset 0 1px 0 rgba(255,255,255,.7); }
+    .schedule-toggle { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; }
+    .schedule-option.active { background:linear-gradient(135deg,var(--accent-4),var(--accent-2) 58%,var(--accent)); color:white; border-color:transparent; }
+    .schedule-grid { display:grid; grid-template-columns:1fr; gap:14px; }
+    .schedule-hidden { display:none; }
+    .schedule-note { margin-top:12px; font-size:12px; color:var(--muted); line-height:1.55; }
+    .actions { display:grid; grid-template-columns:1.4fr 1fr; gap:12px; margin-top:16px; align-items:center; }
+    .actions-meta { display:flex; justify-content:flex-end; align-items:center; gap:12px; flex-wrap:wrap; }
+    button { border:none; cursor:pointer; border-radius:999px; padding:14px 22px; font:inherit; transition:all .35s var(--ease); }
+    button:hover { transform:translateY(-1px); }
+    .btn-primary { position:relative; overflow:hidden; background:linear-gradient(135deg,var(--accent-4),var(--accent-2) 54%,var(--accent)); color:white; box-shadow:0 16px 36px rgba(157,96,57,.24); font-weight:700; min-height:54px; font-size:15px; letter-spacing:.02em; }
+    .btn-primary::after { content:""; position:absolute; inset:0; background:linear-gradient(120deg, transparent 20%, rgba(255,255,255,.20) 48%, transparent 78%); transform:translateX(-120%); transition:transform .85s var(--ease); }
+    .btn-primary:hover::after { transform:translateX(120%); }
+    .btn-secondary { min-height:54px; font-weight:600; background:linear-gradient(180deg, rgba(255,255,255,.98), rgba(247,236,227,.96)); color:var(--accent-4); border:1px solid rgba(202,141,98,.18); box-shadow:0 12px 24px rgba(157,96,57,.08); }
+    #sendStatus { margin-top:16px; color:var(--muted); font-size:14px; line-height:1.7; min-height:24px; padding:12px 14px; border-radius:14px; background:rgba(255,255,255,.56); border:1px solid rgba(202,141,98,.10); }
+    .preview-card { background:linear-gradient(180deg, rgba(255,255,255,.98), rgba(253,249,245,.96)); border-radius:22px; padding:30px; border:1px solid rgba(157,96,57,.08); line-height:1.8; min-height:640px; box-shadow: inset 0 1px 0 rgba(255,255,255,.8), 0 18px 30px rgba(157,96,57,.05); }
+    .preview-subject { display:block; font-weight:700; margin-bottom:14px; color:#2c1e17; font-size:18px; }
+    .preview-divider { margin:16px 0 18px; border:none; border-top:1px solid rgba(157,96,57,.10); }
+    .preview-body { color:#3d2c22; word-break:break-word; }
+    .preview-body a { color:var(--accent-4); text-decoration:none; border-bottom:1px solid rgba(157,96,57,.24); }
+    .auto-links { margin:10px 0 18px; font-size:14px; line-height:1.7; color:#5e5046; padding:12px 14px; border-radius:14px; background:linear-gradient(180deg, rgba(255,248,242,.96), rgba(251,242,235,.90)); border:1px solid rgba(202,141,98,.10); }
+    .auto-links a { color:var(--accent-4); text-decoration:none; border-bottom:1px solid rgba(157,96,57,.20); }
+    .footer-note { margin-top:14px; font-size:12px; color:var(--muted); text-align:center; }
+    .queue-list { display:grid; gap:14px; }
+    .queue-empty { color:var(--muted); font-size:14px; padding:8px 0; }
+    .queue-card { border-radius:20px; padding:18px; background:linear-gradient(180deg, rgba(255,250,246,.98), rgba(248,238,230,.94)); border:1px solid rgba(202,141,98,.10); box-shadow:var(--shadow-sm); transition:all .35s var(--ease); }
+    .queue-card:hover { transform:translateY(-2px); box-shadow:var(--shadow-md); }
+    .queue-head { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
+    .queue-subject { font-weight:700; color:#2f1f17; font-size:16px; line-height:1.5; }
+    .queue-status { display:inline-flex; align-items:center; gap:6px; padding:8px 12px; border-radius:999px; font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; box-shadow: inset 0 1px 0 rgba(255,255,255,.55); }
+    .status-scheduled { background:rgba(202,141,98,.14); color:var(--warn); }
+    .status-sent { background:rgba(126,106,85,.14); color:var(--ok); }
+    .status-cancelled, .status-failed { background:rgba(158,79,67,.12); color:var(--danger); }
+    .queue-meta { margin-top:12px; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .queue-meta-item { background:linear-gradient(180deg, rgba(255,255,255,.76), rgba(250,242,236,.92)); border:1px solid rgba(202,141,98,.08); border-radius:14px; padding:10px 12px; }
+    .queue-meta-label { display:block; font-size:11px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); margin-bottom:6px; }
+    .queue-meta-value { font-size:14px; color:var(--text); line-height:1.5; }
+    .queue-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+    .queue-btn-danger { background:linear-gradient(135deg, #a35544, #c06f58); color:white; }
+    .toast { position:fixed; right:22px; bottom:22px; z-index:30; min-width:280px; max-width:420px; padding:14px 16px; border-radius:18px; background:linear-gradient(180deg, rgba(255,252,248,.98), rgba(247,237,228,.96)); border:1px solid rgba(202,141,98,.18); box-shadow:0 22px 50px rgba(84,49,27,.18); display:flex; align-items:center; gap:12px; color:var(--text); opacity:0; transform:translateY(18px); pointer-events:none; transition:opacity .35s var(--ease), transform .35s var(--ease); }
+    .toast.show { opacity:1; transform:translateY(0); }
+    .toast-icon { width:34px; height:34px; border-radius:12px; display:inline-flex; align-items:center; justify-content:center; background:linear-gradient(135deg, rgba(126,106,85,.18), rgba(202,141,98,.18)); color:var(--accent-4); font-weight:800; }
+    .toast-text { font-size:14px; line-height:1.5; }
+    .modal-backdrop { position:fixed; inset:0; background:rgba(36,24,17,.34); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:20; padding:20px; }
+    .modal-backdrop.show { display:flex; animation:fadeSlideUp .35s var(--ease); }
+    .confirm-modal { width:min(560px,100%); border-radius:28px; background:linear-gradient(180deg, rgba(255,255,255,.96), rgba(252,246,240,.94)); border:1px solid rgba(202,141,98,.14); box-shadow:0 40px 120px rgba(63,36,21,.22); overflow:hidden; position:relative; }
+    .confirm-modal::before { content:""; position:absolute; inset:0; background:linear-gradient(140deg, rgba(255,255,255,.35), transparent 30%, transparent 70%, rgba(202,141,98,.08)); pointer-events:none; }
+    .confirm-head { padding:24px 26px 14px; display:flex; align-items:center; gap:14px; }
+    .confirm-icon { width:52px; height:52px; border-radius:18px; display:flex; align-items:center; justify-content:center; font-size:22px; color:var(--accent-4); background:linear-gradient(135deg, rgba(227,189,161,.32), rgba(202,141,98,.16)); box-shadow:inset 0 1px 0 rgba(255,255,255,.7); }
+    .confirm-title { margin:0; font-family:Georgia, serif; font-size:30px; line-height:1.1; color:#2f1f17; }
+    .confirm-sub { margin:6px 0 0; color:var(--muted); font-size:14px; line-height:1.7; }
+    .confirm-body { padding:0 26px 22px; position:relative; z-index:1; }
+    .confirm-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px; }
+    .confirm-item { border-radius:18px; background:rgba(255,255,255,.66); border:1px solid rgba(202,141,98,.10); padding:14px 16px; }
+    .confirm-label { display:block; font-size:11px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); margin-bottom:8px; font-weight:700; }
+    .confirm-value { font-size:15px; color:var(--text); line-height:1.6; word-break:break-word; }
+    .confirm-actions { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:0 26px 26px; }
+    .btn-modal-secondary, .btn-modal-primary { min-height:54px; border-radius:18px; }
+    .btn-modal-secondary { background:linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,240,233,.96)); color:var(--text); border:1px solid rgba(202,141,98,.14); box-shadow:var(--shadow-sm); font-weight:600; }
+    .btn-modal-primary { background:linear-gradient(135deg,var(--accent-4),var(--accent-2) 54%,var(--accent)); color:white; box-shadow:0 18px 36px rgba(157,96,57,.22); font-weight:700; }
+    @media (max-width: 900px) { .link-builder { grid-template-columns:1fr; } .queue-meta { grid-template-columns:1fr; } }
+    @media (max-width: 1180px) { .workspace-grid { grid-template-columns:1fr; } .hero { flex-direction:column; align-items:flex-start; } .hero-badge { align-self:flex-start; } }
+    @media (max-width: 720px) {
+      .panel { padding:22px; border-radius:22px; }
+      .app-shell { padding:0 14px 30px; }
+      #bodyText { min-height:300px; }
+      .preview-card { min-height:auto; padding:20px; }
+      .actions { grid-template-columns:1fr; }
+      .actions-meta { justify-content:flex-start; }
+      .confirm-grid, .confirm-actions { grid-template-columns:1fr; }
+      .queue-head { flex-direction:column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+  <div class="topbar">Carlota Email</div>
+  <div class="app-shell">
+    <div class="hero reveal">
+      <div>
+        <div class="hero-greeting">Hi Eden</div>
+        <div class="eyebrow"><span class="eyebrow-dot"></span><span>Dédié à Eden</span></div>
+        <h1 class="app-title">Carlota <span class="app-title-accent">Email</span></h1>
+        <p class="app-subtitle">Rédaction, prévisualisation, programmation et envoi d’emails.</p>
+      </div>
+      <div class="hero-badge">Interface d’envoi</div>
+    </div>
+    <div class="workspace-grid">
+      <section>
+        <section class="panel reveal" style="animation-delay: 0.18s; margin-bottom: 24px;">
+          <div class="section-title"><div class="section-icon">✦</div><h2>Composer</h2></div>
+          <p class="sub">Les liens Carlota sont ajoutés automatiquement juste après « Hi, » si présent, sinon après la première ligne non vide.</p>
+          <div class="field">
+            <label for="subjectPreset">Langue</label>
+            <div class="subject-pills">
+              <button type="button" class="subject-pill active" id="subjectEnBtn">English</button>
+              <button type="button" class="subject-pill" id="subjectFrBtn">Français</button>
+            </div>
+            <input id="subjectPreset" type="hidden" value="en" />
+          </div>
+          <div class="field">
+            <label for="subject">Objet</label>
+            <input id="subject" type="text" value="Carlota, the promise of high-performance skincare" />
+            <div class="helper-text">Tu peux choisir le sujet anglais ou français, puis le modifier librement.</div>
+          </div>
+          <div class="field">
+            <label for="emails">Destinataires</label>
+            <div id="emailDropZone" class="drop-zone"><strong>Glisse ici</strong> une liste d’emails, un fichier .txt ou .csv</div>
+            <textarea id="emails" spellcheck="false" placeholder="Enter emails, one per line or separated by commas"></textarea>
+            <div class="helper-text">Tu peux coller directement une liste d’emails, ou glisser du texte depuis un autre document.</div>
+          </div>
+          <div class="field">
+            <label for="bodyText">Message</label>
+            <div class="toolbar">
+              <button type="button" id="boldBtn" class="tool-btn">B</button>
+              <button type="button" id="italicBtn" class="tool-btn"><em>I</em></button>
+              <button type="button" id="toggleLinkBtn" class="link-toggle-btn">Link</button>
+            </div>
+            <div id="linkBuilder" class="link-builder hidden">
+              <input id="linkTextInput" type="text" placeholder="Texte du lien" />
+              <input id="linkUrlInput" type="text" placeholder="https://example.com" />
+              <button type="button" id="applyLinkBtn" class="tool-btn">Ajouter le lien</button>
+            </div>
+            <textarea id="bodyText" spellcheck="false" placeholder="Write your message here..."></textarea>
+          </div>
+          <div class="field">
+            <label>Programmation</label>
+            <div class="schedule-card">
+              <div class="schedule-toggle">
+                <button type="button" id="sendNowBtn" class="tool-btn schedule-option active">Envoyer maintenant</button>
+                <button type="button" id="scheduleLaterBtn" class="tool-btn schedule-option">Programmer</button>
+              </div>
+              <div id="scheduleFields" class="schedule-grid schedule-hidden">
+                <div>
+                  <label>Jour</label>
+                  <div class="day-pills">
+                    <button type="button" class="day-pill" data-day="today">Aujourd’hui</button>
+                    <button type="button" class="day-pill" data-day="tomorrow">Demain</button>
+                    <button type="button" class="day-pill" data-day="day-after">Après-demain</button>
+                    <button type="button" class="day-pill" data-day="custom">Date précise</button>
+                  </div>
+                </div>
+                <div id="customDateWrap" class="schedule-hidden">
+                  <label for="scheduleDate">Date précise</label>
+                  <input id="scheduleDate" type="date" />
+                </div>
+                <div>
+                  <label for="scheduleTime">Heure</label>
+                  <input id="scheduleTime" type="time" />
+                </div>
+              </div>
+              <div id="scheduleSummary" class="schedule-note">L’email partira immédiatement.</div>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn-primary" id="sendEmails">Send</button>
+            <div class="actions-meta">
+              <button id="resetBtn" class="tool-btn btn-secondary" type="button">Clear message</button>
+              <span id="emailCount" style="font-size:13px;color:var(--muted);"></span>
+            </div>
+          </div>
+          <div id="sendStatus"></div>
+        </section>
+
+        <section class="panel reveal" style="animation-delay: 0.28s;">
+          <div class="section-title"><div class="section-icon">⌛</div><h2>Emails programmés</h2></div>
+          <p class="sub">Chaque carte possède ses actions directes pour modifier ou supprimer l’envoi prévu.</p>
+          <div id="queueList" class="queue-list"></div>
+        </section>
+      </section>
+
+      <section class="panel reveal" style="animation-delay: 0.38s;">
+        <div class="section-title"><div class="section-icon">✉</div><h2>Preview</h2></div>
+        <p class="sub">Aperçu fidèle au mail envoyé.</p>
+        <div class="preview-card">
+          <strong id="previewSubject" class="preview-subject"></strong>
+          <hr class="preview-divider" />
+          <div id="previewBody" class="preview-body"></div>
+        </div>
+        <div class="footer-note">Carlota Cosmetics</div>
+      </section>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="confirmBackdrop">
+    <div class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+      <div class="confirm-head">
+        <div class="confirm-icon">✧</div>
+        <div>
+          <h3 class="confirm-title" id="confirmTitle">Confirm action</h3>
+          <p class="confirm-sub">Vérifie les détails avant de continuer.</p>
+        </div>
+      </div>
+      <div class="confirm-body">
+        <div class="confirm-grid">
+          <div class="confirm-item"><span class="confirm-label">Objet</span><div class="confirm-value" id="confirmSubject"></div></div>
+          <div class="confirm-item"><span class="confirm-label">Destinataires</span><div class="confirm-value" id="confirmRecipients"></div></div>
+          <div class="confirm-item"><span class="confirm-label">Mode</span><div class="confirm-value" id="confirmMode"></div></div>
+          <div class="confirm-item"><span class="confirm-label">Programmation</span><div class="confirm-value" id="confirmSchedule"></div></div>
+        </div>
+      </div>
+      <div class="confirm-actions">
+        <button type="button" class="btn-modal-secondary" id="cancelConfirm">Back</button>
+        <button type="button" class="btn-modal-primary" id="approveConfirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">
+    <div class="toast-icon" id="toastIcon">✓</div>
+    <div class="toast-text" id="toastText">Action effectuée.</div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://127.0.0.1:8766';
+    const subjectInput = document.getElementById('subject');
+    const subjectPreset = document.getElementById('subjectPreset');
+    const subjectEnBtn = document.getElementById('subjectEnBtn');
+    const subjectFrBtn = document.getElementById('subjectFrBtn');
+    const emailsInput = document.getElementById('emails');
+    const bodyText = document.getElementById('bodyText');
+    const sendEmailsBtn = document.getElementById('sendEmails');
+    const resetBtn = document.getElementById('resetBtn');
+    const emailCount = document.getElementById('emailCount');
+    const sendStatus = document.getElementById('sendStatus');
+    const previewSubject = document.getElementById('previewSubject');
+    const previewBody = document.getElementById('previewBody');
+    const boldBtn = document.getElementById('boldBtn');
+    const italicBtn = document.getElementById('italicBtn');
+    const toggleLinkBtn = document.getElementById('toggleLinkBtn');
+    const linkBuilder = document.getElementById('linkBuilder');
+    const linkTextInput = document.getElementById('linkTextInput');
+    const linkUrlInput = document.getElementById('linkUrlInput');
+    const applyLinkBtn = document.getElementById('applyLinkBtn');
+    const emailDropZone = document.getElementById('emailDropZone');
+    const sendNowBtn = document.getElementById('sendNowBtn');
+    const scheduleLaterBtn = document.getElementById('scheduleLaterBtn');
+    const scheduleFields = document.getElementById('scheduleFields');
+    const scheduleDate = document.getElementById('scheduleDate');
+    const scheduleTime = document.getElementById('scheduleTime');
+    const scheduleSummary = document.getElementById('scheduleSummary');
+    const customDateWrap = document.getElementById('customDateWrap');
+    const confirmBackdrop = document.getElementById('confirmBackdrop');
+    const confirmSubject = document.getElementById('confirmSubject');
+    const confirmRecipients = document.getElementById('confirmRecipients');
+    const confirmMode = document.getElementById('confirmMode');
+    const confirmSchedule = document.getElementById('confirmSchedule');
+    const cancelConfirm = document.getElementById('cancelConfirm');
+    const approveConfirm = document.getElementById('approveConfirm');
+    const dayPills = Array.from(document.querySelectorAll('.day-pill'));
+    const queueList = document.getElementById('queueList');
+    const toast = document.getElementById('toast');
+    const toastIcon = document.getElementById('toastIcon');
+    const toastText = document.getElementById('toastText');
+
+    const AUTO_LINKS_HTML = '<div class="auto-links"><a href="https://www.carlotacosmetics.com" target="_blank" rel="noopener noreferrer">Carlota.com</a> | <a href="https://www.instagram.com/carlotacosmetics" target="_blank" rel="noopener noreferrer">Instagram</a> | <a href="https://www.tiktok.com/@carlotacosmetics" target="_blank" rel="noopener noreferrer">TikTok</a></div>';
+    const DEFAULT_MESSAGE = '';
+    const SUBJECT_EN = 'Carlota, the promise of high-performance skincare';
+    const SUBJECT_FR = 'Carlota, une promesse éternelle 🤍';
+    let scheduleMode = 'now';
+    let pendingAction = null;
+    let selectedDayMode = 'today';
+    let editingJobId = null;
+    let queueCache = [];
+    let toastTimer = null;
+
+    function showToast(icon, text) {
+      toastIcon.textContent = icon;
+      toastText.textContent = text;
+      toast.classList.add('show');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+    }
+
+    function uniqueEmails(list) {
+      const seen = new Set();
+      return (list || []).filter(email => {
+        const key = String(email).toLowerCase();
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    }
+
+    function extractEmails(raw) {
+      const matches = String(raw || '').match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi) || [];
+      return uniqueEmails(matches);
+    }
+
+    function mergeEmails(newEmails) {
+      const currentEmails = extractEmails(emailsInput.value);
+      const merged = uniqueEmails(currentEmails.concat(newEmails || []));
+      emailsInput.value = merged.join('\n');
+      sendStatus.textContent = merged.length ? merged.length + ' email(s) chargé(s).' : 'Aucun email détecté.';
+      updatePreview();
+    }
+
+    function handleDroppedText(text) { mergeEmails(extractEmails(text)); }
+
+    function handleDroppedFiles(files) {
+      const readableFiles = Array.from(files || []).filter(file => file && ((typeof file.type === 'string' && file.type.indexOf('text/') === 0) || /\.(txt|csv)$/i.test(file.name || '')));
+      if (!readableFiles.length) { sendStatus.textContent = 'Aucun fichier texte ou CSV valide détecté.'; return; }
+      Promise.all(readableFiles.map(file => file.text()))
+        .then(contents => handleDroppedText(contents.join('\n')))
+        .catch(() => { sendStatus.textContent = 'Impossible de lire le fichier déposé.'; });
+    }
+
+    function escapeHtml(value) {
+      return String(value || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function sanitizeHref(url) {
+      const cleaned = String(url || '').trim();
+      if (/^(https?:\/\/|mailto:)/i.test(cleaned)) return cleaned;
+      if (/^[\w.-]+\.[a-z]{2,}(\/.*)?$/i.test(cleaned)) return 'https://' + cleaned;
+      return null;
+    }
+
+    function renderPreviewHtml(value) {
+      return escapeHtml(value || '')
+        .replace(/&lt;strong&gt;([\s\S]*?)&lt;\/strong&gt;/gi, '<strong>$1</strong>')
+        .replace(/&lt;i&gt;([\s\S]*?)&lt;\/i&gt;/gi, '<i>$1</i>')
+        .replace(/&lt;a href=&quot;([\s\S]*?)&quot;&gt;([\s\S]*?)&lt;\/a&gt;/gi, (match, href, label) => {
+          const safe = sanitizeHref(href);
+          if (!safe) return label;
+          return '<a href="' + safe.replace(/"/g, '&quot;') + '" target="_blank" rel="noopener noreferrer">' + label + '</a>';
+        })
+        .replace(/\n/g, '<br>');
+    }
+
+    function insertAutoLinksSmart(renderedBody) {
+      const hiMatch = renderedBody.match(/^\s*(?:Hi|Hello|Bonjour|Salut),((?:<br>)*)/i);
+      if (hiMatch) {
+        const hiEnd = hiMatch[0].length;
+        return renderedBody.slice(0, hiEnd) + AUTO_LINKS_HTML + renderedBody.slice(hiEnd);
+      }
+      const firstNonEmptyLineMatch = renderedBody.match(/^([\s\S]*?\S.*?)(<br>|$)/);
+      if (firstNonEmptyLineMatch) {
+        const insertAt = firstNonEmptyLineMatch[0].length;
+        return renderedBody.slice(0, insertAt) + '<br>' + AUTO_LINKS_HTML + renderedBody.slice(insertAt);
+      }
+      return AUTO_LINKS_HTML + renderedBody;
+    }
+
+    function updatePreview() {
+      previewSubject.textContent = subjectInput.value.trim() || 'Sans sujet';
+      previewBody.innerHTML = insertAutoLinksSmart(renderPreviewHtml(bodyText.value));
+      const emails = extractEmails(emailsInput.value);
+      emailCount.textContent = emails.length ? emails.length + ' emails ready' : '';
+    }
+
+    function saveLocal() {
+      localStorage.setItem('carlota_subject', subjectInput.value);
+      localStorage.setItem('carlota_message', bodyText.value);
+      localStorage.setItem('carlota_subject_preset', subjectPreset.value || 'en');
+      localStorage.setItem('carlota_schedule_mode', scheduleMode);
+      localStorage.setItem('carlota_schedule_date', scheduleDate.value || '');
+      localStorage.setItem('carlota_schedule_time', scheduleTime.value || '');
+      localStorage.setItem('carlota_day_mode', selectedDayMode);
+    }
+
+    function setActiveSubjectPreset(preset) {
+      const isFr = preset === 'fr';
+      subjectPreset.value = isFr ? 'fr' : 'en';
+      subjectEnBtn.classList.toggle('active', !isFr);
+      subjectFrBtn.classList.toggle('active', isFr);
+    }
+
+    function applySubjectPreset(preset) {
+      const isFr = preset === 'fr';
+      subjectInput.value = isFr ? SUBJECT_FR : SUBJECT_EN;
+      setActiveSubjectPreset(isFr ? 'fr' : 'en');
+      saveLocal();
+      updatePreview();
+    }
+
+    function setScheduleMode(mode) {
+      scheduleMode = mode;
+      const isLater = mode === 'later';
+      sendNowBtn.classList.toggle('active', !isLater);
+      scheduleLaterBtn.classList.toggle('active', isLater);
+      scheduleFields.classList.toggle('schedule-hidden', !isLater);
+      updateScheduleSummary();
+      saveLocal();
+    }
+
+    function setDayMode(mode) {
+      selectedDayMode = mode;
+      dayPills.forEach(btn => btn.classList.toggle('active', btn.dataset.day === mode));
+      customDateWrap.classList.toggle('schedule-hidden', mode !== 'custom');
+      if (mode !== 'custom') {
+        const date = new Date();
+        if (mode === 'tomorrow') date.setDate(date.getDate() + 1);
+        if (mode === 'day-after') date.setDate(date.getDate() + 2);
+        scheduleDate.value = date.toISOString().slice(0, 10);
+      }
+      updateScheduleSummary();
+      saveLocal();
+    }
+
+    function formatFrenchDate(dateString) {
+      if (!dateString) return '';
+      const d = new Date(dateString + 'T00:00:00');
+      return d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+    }
+
+    function formatFrenchDateTime(isoString) {
+      if (!isoString) return '—';
+      return new Date(isoString).toLocaleString('fr-FR');
+    }
+
+    function updateScheduleSummary() {
+      if (scheduleMode !== 'later') {
+        scheduleSummary.textContent = editingJobId ? 'Modification : envoi immédiat.' : 'L’email partira immédiatement.';
+        return;
+      }
+      if (!scheduleDate.value || !scheduleTime.value) {
+        scheduleSummary.textContent = 'Choisis un jour et une heure pour programmer l’envoi.';
+        return;
+      }
+      scheduleSummary.textContent = (editingJobId ? 'Modification prévue pour ' : 'Envoi programmé pour ') + formatFrenchDate(scheduleDate.value) + ' à ' + scheduleTime.value + '.';
+    }
+
+    function getScheduledDateTime() {
+      if (scheduleMode !== 'later') return null;
+      if (!scheduleDate.value || !scheduleTime.value) return null;
+      return new Date(scheduleDate.value + 'T' + scheduleTime.value);
+    }
+
+    function loadLocal() {
+      const savedSubject = localStorage.getItem('carlota_subject');
+      const savedMessage = localStorage.getItem('carlota_message');
+      const savedPreset = localStorage.getItem('carlota_subject_preset') || 'en';
+      const savedScheduleMode = localStorage.getItem('carlota_schedule_mode') || 'now';
+      const savedScheduleDate = localStorage.getItem('carlota_schedule_date') || '';
+      const savedScheduleTime = localStorage.getItem('carlota_schedule_time') || '';
+      const savedDayMode = localStorage.getItem('carlota_day_mode') || 'today';
+      setActiveSubjectPreset(savedPreset);
+      subjectInput.value = savedSubject || (savedPreset === 'fr' ? SUBJECT_FR : SUBJECT_EN);
+      bodyText.value = savedMessage || DEFAULT_MESSAGE;
+      scheduleDate.value = savedScheduleDate;
+      scheduleTime.value = savedScheduleTime;
+      setScheduleMode(savedScheduleMode);
+      setDayMode(savedDayMode);
+    }
+
+    async function requestJson(path, method = 'GET', payload) {
+      const response = await fetch(API_BASE + path, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: payload ? JSON.stringify(payload) : undefined
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Erreur');
+      return data;
+    }
+
+    async function doSend(subject, emails, message) { return await requestJson('/send', 'POST', { subject, emails, body_text: message }); }
+    async function doSchedule(subject, emails, message, scheduledFor) { return await requestJson('/schedule', 'POST', { subject, emails, body_text: message, scheduled_for: scheduledFor }); }
+    async function fetchQueue() { return await requestJson('/queue'); }
+    async function cancelQueueJob(jobId) { return await requestJson('/queue/cancel', 'POST', { job_id: jobId }); }
+    async function editQueueJob(jobId, subject, emails, message, scheduledFor) { return await requestJson('/queue/edit', 'PUT', { job_id: jobId, subject, emails, body_text: message, scheduled_for: scheduledFor }); }
+
+    function openConfirmModal(payload) {
+      confirmSubject.textContent = payload.subject || '—';
+      confirmRecipients.textContent = payload.emails ? (payload.emails.length + ' destinataire(s)') : '—';
+      confirmMode.textContent = payload.confirmType === 'cancel' ? 'Suppression' : (editingJobId ? 'Modification' : (payload.mode === 'later' ? 'Envoi programmé' : 'Envoi immédiat'));
+      confirmSchedule.textContent = payload.confirmType === 'cancel'
+        ? formatFrenchDateTime(payload.scheduled_for)
+        : (payload.mode === 'later' ? (formatFrenchDate(scheduleDate.value) + ' à ' + scheduleTime.value) : 'Maintenant');
+      pendingAction = payload;
+      confirmBackdrop.classList.add('show');
+    }
+
+    function closeConfirmModal() {
+      confirmBackdrop.classList.remove('show');
+      pendingAction = null;
+    }
+
+    function resetComposer(afterEdit = false) {
+      editingJobId = null;
+      setScheduleMode('now');
+      setDayMode('today');
+      scheduleTime.value = '';
+      if (afterEdit) sendStatus.textContent = 'Modification enregistrée.';
+      updateScheduleSummary();
+    }
+
+    async function processConfirmedSend() {
+      if (!pendingAction) return;
+      if (pendingAction.confirmType === 'cancel') {
+        closeConfirmModal();
+        try {
+          await cancelQueueJob(pendingAction.jobId);
+          sendStatus.textContent = 'Email programmé supprimé.';
+          await refreshQueue();
+          showToast('✓', 'Email programmé supprimé avec succès.');
+        } catch (error) {
+          sendStatus.textContent = 'Erreur : ' + error.message;
+        }
+        return;
+      }
+
+      const { subject, emails, message, mode, scheduledAt } = pendingAction;
+      closeConfirmModal();
+      if (editingJobId) {
+        sendStatus.textContent = 'Modification en cours...';
+        try {
+          await editQueueJob(editingJobId, subject, emails, message, scheduledAt ? scheduledAt.toISOString() : null);
+          resetComposer(true);
+          await refreshQueue();
+          showToast('✓', 'Email programmé modifié avec succès.');
+        } catch (error) {
+          sendStatus.textContent = 'Erreur : ' + error.message;
+        }
+        return;
+      }
+      if (mode === 'later') {
+        sendEmailsBtn.disabled = true;
+        sendStatus.textContent = 'Programmation en cours...';
+        try {
+          await doSchedule(subject, emails, message, scheduledAt.toISOString());
+          sendStatus.textContent = 'Envoi programmé pour ' + formatFrenchDate(scheduleDate.value) + ' à ' + scheduleTime.value + '.';
+          await refreshQueue();
+          showToast('✓', 'Email programmé avec succès.');
+        } catch (error) {
+          sendStatus.textContent = 'Erreur : ' + error.message;
+        } finally {
+          sendEmailsBtn.disabled = false;
+        }
+        return;
+      }
+      sendEmailsBtn.disabled = true;
+      sendEmailsBtn.textContent = 'Sending...';
+      sendStatus.textContent = 'Envoi en cours...';
+      try {
+        const data = await doSend(subject, emails, message);
+        sendStatus.textContent = 'Envoyé : ' + (data.sent_count || emails.length) + ' email(s).';
+        showToast('✓', 'Email envoyé avec succès.');
+      } catch (error) {
+        sendStatus.textContent = 'Erreur : ' + error.message;
+      } finally {
+        sendEmailsBtn.disabled = false;
+        sendEmailsBtn.textContent = 'Send';
+      }
+    }
+
+    function sendEmails() {
+      const subject = subjectInput.value.trim();
+      const emails = extractEmails(emailsInput.value);
+      const message = bodyText.value.trim();
+      if (!subject || !emails.length || !message) {
+        sendStatus.textContent = 'Remplis bien Objet, Destinataires et Message.';
+        return;
+      }
+      const scheduledAt = getScheduledDateTime();
+      if ((scheduleMode === 'later' || editingJobId) && (!scheduledAt || Number.isNaN(scheduledAt.getTime()))) {
+        sendStatus.textContent = 'Choisis un jour et une heure valides.';
+        return;
+      }
+      if ((scheduleMode === 'later' || editingJobId) && scheduledAt.getTime() - Date.now() <= 0) {
+        sendStatus.textContent = 'L’heure programmée doit être dans le futur.';
+        return;
+      }
+      openConfirmModal({ subject, emails, message, mode: scheduleMode, scheduledAt });
+    }
+
+    function wrapSelection(tag) {
+      const start = bodyText.selectionStart;
+      const end = bodyText.selectionEnd;
+      const text = bodyText.value;
+      if (start === end) return;
+      const before = text.substring(0, start);
+      const selected = text.substring(start, end);
+      const after = text.substring(end);
+      bodyText.value = before + '<' + tag + '>' + selected + '</' + tag + '>' + after;
+      bodyText.focus();
+      saveLocal();
+      updatePreview();
+    }
+
+    function toggleLinkBuilder() {
+      const willOpen = linkBuilder.classList.contains('hidden');
+      linkBuilder.classList.toggle('hidden');
+      toggleLinkBtn.classList.toggle('active', willOpen);
+      if (willOpen) {
+        const selected = bodyText.value.substring(bodyText.selectionStart, bodyText.selectionEnd).trim();
+        if (selected) linkTextInput.value = selected;
+      }
+    }
+
+    function applyLink() {
+      const start = bodyText.selectionStart;
+      const end = bodyText.selectionEnd;
+      const selected = bodyText.value.substring(start, end).trim();
+      const textValue = (linkTextInput.value || '').trim() || selected;
+      const urlValue = sanitizeHref(linkUrlInput.value || '');
+      if (!textValue) { sendStatus.textContent = 'Sélectionne un texte ou écris le texte du lien.'; return; }
+      if (!urlValue) { sendStatus.textContent = 'Ajoute un lien valide.'; return; }
+      const anchor = '<a href="' + urlValue.replace(/"/g, '&quot;') + '">' + textValue + '</a>';
+      if (start !== end) bodyText.value = bodyText.value.slice(0, start) + anchor + bodyText.value.slice(end);
+      else bodyText.value += (bodyText.value.endsWith(' ') || bodyText.value.endsWith('\n') || bodyText.value.length === 0 ? '' : ' ') + anchor;
+      linkTextInput.value = '';
+      linkUrlInput.value = '';
+      linkBuilder.classList.add('hidden');
+      toggleLinkBtn.classList.remove('active');
+      saveLocal();
+      updatePreview();
+      sendStatus.textContent = 'Lien ajouté au message.';
+    }
+
+    function statusClass(status) {
+      if (status === 'sent') return 'status-sent';
+      if (status === 'cancelled' || status === 'failed') return 'status-cancelled';
+      return 'status-scheduled';
+    }
+
+    function renderQueue(jobs) {
+      queueCache = jobs || [];
+      if (!queueCache.length) {
+        queueList.innerHTML = '<div class="queue-empty">Aucun email programmé pour le moment.</div>';
+        return;
+      }
+      queueList.innerHTML = queueCache
+        .sort((a, b) => String(a.scheduled_for || '').localeCompare(String(b.scheduled_for || '')))
+        .map(job => `
+          <div class="queue-card">
+            <div class="queue-head">
+              <div class="queue-subject">${escapeHtml(job.subject || 'Sans objet')}</div>
+              <div class="queue-status ${statusClass(job.status)}">${escapeHtml(job.status || 'scheduled')}</div>
+            </div>
+            <div class="queue-meta">
+              <div class="queue-meta-item"><span class="queue-meta-label">Date / heure</span><div class="queue-meta-value">${escapeHtml(formatFrenchDateTime(job.scheduled_for))}</div></div>
+              <div class="queue-meta-item"><span class="queue-meta-label">Destinataires</span><div class="queue-meta-value">${escapeHtml((job.emails || []).length + ' destinataire(s)')}</div></div>
+            </div>
+            <div class="queue-actions">
+              ${job.status === 'scheduled' ? `<button class="tool-btn queue-btn" data-edit="${job.id}">Modifier</button><button class="tool-btn queue-btn queue-btn-danger" data-delete="${job.id}">Supprimer</button>` : ''}
+            </div>
+          </div>
+        `).join('');
+
+      queueList.querySelectorAll('[data-edit]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const job = queueCache.find(j => j.id === btn.dataset.edit);
+          if (!job) return;
+          editingJobId = job.id;
+          subjectInput.value = job.subject || '';
+          emailsInput.value = (job.emails || []).join('\n');
+          bodyText.value = job.body_text || '';
+          const dt = job.scheduled_for ? new Date(job.scheduled_for) : null;
+          if (dt) {
+            setScheduleMode('later');
+            scheduleDate.value = dt.toISOString().slice(0, 10);
+            scheduleTime.value = dt.toTimeString().slice(0, 5);
+            setDayMode('custom');
+          }
+          updatePreview();
+          updateScheduleSummary();
+          sendStatus.textContent = 'Modification chargée. Clique sur Send pour enregistrer.';
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      });
+
+      queueList.querySelectorAll('[data-delete]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const job = queueCache.find(j => j.id === btn.dataset.delete);
+          if (!job) return;
+          openConfirmModal({ confirmType: 'cancel', jobId: job.id, subject: job.subject, emails: job.emails, scheduled_for: job.scheduled_for });
+        });
+      });
+    }
+
+    async function refreshQueue() {
+      try {
+        const data = await fetchQueue();
+        renderQueue(data.jobs || []);
+      } catch (error) {
+        queueList.innerHTML = '<div class="queue-empty">Impossible de charger les emails programmés.</div>';
+      }
+    }
+
+    sendEmailsBtn.addEventListener('click', sendEmails);
+    resetBtn.addEventListener('click', () => {
+      bodyText.value = '';
+      localStorage.setItem('carlota_message', '');
+      updatePreview();
+      sendStatus.textContent = '';
+      editingJobId = null;
+    });
+    cancelConfirm.addEventListener('click', closeConfirmModal);
+    approveConfirm.addEventListener('click', processConfirmedSend);
+    confirmBackdrop.addEventListener('click', event => { if (event.target === confirmBackdrop) closeConfirmModal(); });
+    sendNowBtn.addEventListener('click', () => setScheduleMode('now'));
+    scheduleLaterBtn.addEventListener('click', () => setScheduleMode('later'));
+    dayPills.forEach(btn => btn.addEventListener('click', () => setDayMode(btn.dataset.day)));
+    scheduleDate.addEventListener('input', () => { selectedDayMode = 'custom'; setDayMode('custom'); saveLocal(); });
+    scheduleTime.addEventListener('input', () => { updateScheduleSummary(); saveLocal(); });
+    emailDropZone.addEventListener('dragover', event => event.preventDefault());
+    emailDropZone.addEventListener('drop', event => {
+      event.preventDefault();
+      const textData = event.dataTransfer.getData('text/plain');
+      if (textData && textData.trim()) handleDroppedText(textData);
+      if (event.dataTransfer.files && event.dataTransfer.files.length) handleDroppedFiles(event.dataTransfer.files);
+    });
+    emailsInput.addEventListener('paste', event => {
+      const clipboard = event.clipboardData || window.clipboardData;
+      const pastedText = clipboard ? clipboard.getData('text') : '';
+      if (!pastedText) return;
+      const emails = extractEmails(pastedText);
+      if (emails.length > 0) { event.preventDefault(); mergeEmails(emails); }
+    });
+    boldBtn.addEventListener('click', () => wrapSelection('strong'));
+    italicBtn.addEventListener('click', () => wrapSelection('i'));
+    toggleLinkBtn.addEventListener('click', toggleLinkBuilder);
+    applyLinkBtn.addEventListener('click', applyLink);
+    subjectEnBtn.addEventListener('click', () => applySubjectPreset('en'));
+    subjectFrBtn.addEventListener('click', () => applySubjectPreset('fr'));
+    subjectInput.addEventListener('input', () => { saveLocal(); updatePreview(); });
+    bodyText.addEventListener('input', () => { saveLocal(); updatePreview(); });
+    emailsInput.addEventListener('input', updatePreview);
+
+    loadLocal();
+    updatePreview();
+    updateScheduleSummary();
+    refreshQueue();
+  </script>
+</body>
+</html>
